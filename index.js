@@ -39,6 +39,7 @@ async function run() {
 
     const menuCollection=client.db('BristoDB').collection('menu')
     const reviewCollection=client.db('BristoDB').collection('Review')
+    const UserCollection=client.db('BristoDB').collection('users')
  
 
 // Menu Data get 
@@ -48,11 +49,19 @@ async function run() {
         res.send(result)
         
         })
-
         app.get('/review',async(req,res)=>{
             const result=await reviewCollection.find().toArray()
             res.send(result)
         })
+
+        // all register Users API
+        app.post('/users',async(req,res)=>{
+          const user=req.body
+          const result = await UserCollection.insertOne(user)
+          res.send(result)
+        })
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
