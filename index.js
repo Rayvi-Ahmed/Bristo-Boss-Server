@@ -39,7 +39,8 @@ async function run() {
 
     const menuCollection=client.db('BristoDB').collection('menu')
     const reviewCollection=client.db('BristoDB').collection('Review')
-    const UserCollection=client.db('BristoDB').collection('users')
+    const cartCollection=client.db('BristoDB').collection('Carts')
+  
  
 
 // Menu Data get 
@@ -53,6 +54,16 @@ async function run() {
             const result=await reviewCollection.find().toArray()
             res.send(result)
         })
+
+
+        // All carts posted
+        app.post('/carts',async(req,res)=>{
+          const cartsItem=req.body
+          const result = await cartCollection.insertOne(cartsItem)
+          res.send(result)
+        })
+
+        
 
         // all register Users API
         app.post('/users',async(req,res)=>{
