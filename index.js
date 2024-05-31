@@ -2,9 +2,9 @@ const express= require('express')
 const app=express()
 const cors=require('cors')
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 1000;
 
 
 // MiddleWare ///
@@ -38,11 +38,22 @@ async function run() {
     // collections
 
     const menuCollection=client.db('BristoDB').collection('menu')
+    const userCollection=client.db('BristoDB').collection('user')
     const reviewCollection=client.db('BristoDB').collection('Review')
     const cartCollection=client.db('BristoDB').collection('Carts')
+
+
+
+
+
+        // all register Users API
+        app.post('/users',async(req,res)=>{
+          const user=req.body
+          const result = await userCollection.insertOne(user)
+          res.send(result)
+        })
   
  
-
 // Menu Data get 
 
         app.get('/menu',async(req,res)=>{
@@ -63,20 +74,26 @@ async function run() {
           res.send(result)
         })
 
-
+      // All Carts Are send to Client site for Read/ Shown
         app.get('/carts',async(req,res)=>{
-          const result=await cartCollection.find().toArray()
+          const email = req.query.email
+          const query= {email:email}
+          const result=await cartCollection.find(query).toArray()
           res.send(result)
         })
 
 
 
-        // all register Users API
-        app.post('/users',async(req,res)=>{
-          const user=req.body
-          const result = await UserCollection.insertOne(user)
-          res.send(result)
-        })
+      // Indivisual Cart Delete API
+
+     app.delete('/carts/:id',async(req,res)=>{
+      const id= req.params.id;
+      const query={_id:new ObjectId(id)}
+      const result = await cartCollection.deleteOne(query)
+      res.send(result)
+     })
+
+
 
 
 
@@ -93,3 +110,5 @@ async function run() {
     app.listen(port,()=>{
     console.log(`Bristo boss is running at port ${port}`)
     })
+
+    
